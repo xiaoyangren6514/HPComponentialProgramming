@@ -1,0 +1,41 @@
+plugins {
+    id 'com.android.application'
+}
+
+def libraries = rootProject.ext.dependencies
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+
+    defaultConfig {
+        applicationId rootProject.ext.appID.app
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
+        buildConfigField("boolean", "isRelease", String.valueOf(isRelease))
+    }
+
+    buildTypes {
+        debug {
+            buildConfigField("String", "debug", "\"${url.debug}\"")
+        }
+        release {
+            buildConfigField("String", "release", "\"${url.release}\"")
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    libraries.each { k, v -> implementation v }
+    if (isRelease) {
+        implementation project(":lib_order")
+        implementation project(":lib_account")
+    }
+}

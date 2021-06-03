@@ -1,0 +1,18 @@
+plugins {
+    id 'java-library'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_7
+    targetCompatibility = JavaVersion.VERSION_1_7
+}
+
+dependencies {
+//    作为背后服务 监听是否在编译
+    compileOnly 'com.google.auto.service:auto-service:1.0-rc7'
+    annotationProcessor  'com.google.auto.service:auto-service:1.0-rc7'
+//    通过类调用的形式生成Java代码
+    implementation 'com.squareup:javapoet:1.10.0'
+//    依赖注解
+    implementation project(":prouter-annotations")
+}

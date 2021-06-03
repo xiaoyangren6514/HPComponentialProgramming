@@ -1,0 +1,8 @@
+rootProject.name = "HPComponentialProgramming"
+include ':app'
+include ':lib_order'
+include ':lib_account'
+include ':lib_common'
+include ':prouter-annotations'
+include ':prouter-compiler'
+include ':prouter_api'

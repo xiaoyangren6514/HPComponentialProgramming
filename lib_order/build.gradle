@@ -1,0 +1,50 @@
+if (isRelease) {
+    apply plugin: 'com.android.library'
+} else {
+    apply plugin: 'com.android.application'
+}
+def libraries = rootProject.ext.dependencies
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+
+    defaultConfig {
+        if (!isRelease) {
+            applicationId rootProject.ext.appID.login
+        }
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    sourceSets {
+        main {
+            if (!isRelease) {// 组件化模式，可单独运行
+                manifest.srcFile 'src/main/debug/AndroidManifest.xml'
+            } else {// 集成化模式，作为lib存在
+                manifest.srcFile 'src/main/AndroidManifest.xml'
+                java {
+                    exclude "**/debug/**"
+                }
+            }
+        }
+    }
+}
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    libraries.each { k, v -> implementation v }
+    implementation project(":prouter-annotations")
+}
