@@ -6,7 +6,7 @@ import android.os.Bundle;
 
 import com.happy.prouter_annotations.PRouter;
 
-@PRouter(path = "account/modify")
+@PRouter(path = "/account/modify")
 public class ModifyPwdActivity extends AppCompatActivity {
 
     @Override

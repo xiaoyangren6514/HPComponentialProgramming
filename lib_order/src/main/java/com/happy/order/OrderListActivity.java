@@ -6,7 +6,7 @@ import android.os.Bundle;
 
 import com.happy.prouter_annotations.PRouter;
 
-@PRouter(path = "order/list")
+@PRouter(path = "/order/list")
 public class OrderListActivity extends AppCompatActivity {
 
     @Override

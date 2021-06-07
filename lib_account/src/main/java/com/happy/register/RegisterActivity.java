@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.happy.prouter_annotations.PRouter;
 
-@PRouter(path = "account/register")
+@PRouter(path = "/account/register")
 public class RegisterActivity extends AppCompatActivity {
 
     @Override

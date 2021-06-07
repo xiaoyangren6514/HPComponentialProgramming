@@ -9,7 +9,9 @@ ext {
     versionCode = 1000
     versionName = "1.0.0"
 
+    // 测试环境、正式环境  组件化环境/集成化环境
     isRelease = true
+    packageNameForAPT = "com.happy.new_modular_customrouter"
 
     url = [
             "debug"  : "http://www.baidu.com",

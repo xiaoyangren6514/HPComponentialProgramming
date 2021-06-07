@@ -14,6 +14,13 @@ android {
         versionCode rootProject.ext.versionCode
         versionName rootProject.ext.versionName
         buildConfigField("boolean", "isRelease", String.valueOf(isRelease))
+
+        // 在gradle文件中配置选项参数值(用于APT传参接受)
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [moduleName: project.getName(), packageNameForAPT: packageNameForAPT]
+            }
+        }
     }
 
     buildTypes {
@@ -34,6 +41,12 @@ android {
 
 dependencies {
     libraries.each { k, v -> implementation v }
+    // 公共基础库
+    implementation project(":lib_common")
+    //  prouter 专用 注解模块
+    implementation project(":prouter-annotations")
+    // prouter 专用 注解处理器
+    annotationProcessor project(":prouter-compiler")
     if (isRelease) {
         implementation project(":lib_order")
         implementation project(":lib_account")
