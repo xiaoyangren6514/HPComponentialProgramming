@@ -90,8 +90,6 @@ public class PRouterProcessor extends AbstractProcessor {
         // 只有接收到App壳传递过来的数据，才能证明APT环境搭建完成
         options = processingEnv.getOptions().get(ProcessorConfig.OPTIONS);
         aptPackage = processingEnv.getOptions().get(ProcessorConfig.APT_PACKAGE);
-        showLog("options:" + options);
-        showLog("aptPackage:" + aptPackage);
         if (options != null && aptPackage != null) {
             showLog("APT环境搭建完成，options:" + options + ",aptPackage:" + aptPackage);
         } else {
@@ -163,8 +161,8 @@ public class PRouterProcessor extends AbstractProcessor {
         }
         // now mAllPathMap已经有值
         // 定义生成类文件实现的接口 Path Group
-        TypeElement pathType = elementTool.getTypeElement(ProcessorConfig.PROUTER_API_PATH);// PRouterPath描述
-        TypeElement groupType = elementTool.getTypeElement(ProcessorConfig.PROUTER_API_GROUP);// PRouterGroup描述
+        TypeElement pathType = elementTool.getTypeElement(ProcessorConfig.PROUTER_API_PATH);// PRouterPath接口描述
+        TypeElement groupType = elementTool.getTypeElement(ProcessorConfig.PROUTER_API_GROUP);// PRouterGroup接口描述
         // 生成PATH
         try {
             createPathFile(pathType);
@@ -190,18 +188,19 @@ public class PRouterProcessor extends AbstractProcessor {
      * @param pathType  PRouterPath接口信息
      */
     private void createGroupFile(TypeElement groupType, TypeElement pathType) throws IOException {
+        // 仓库二 缓存二是否有要生成的类文件
         if (ProcessorUtils.isEmpty(mAllPathMap) || ProcessorUtils.isEmpty(mAllGroupMap)) return;
         // 返回值 Map<String,Class<? extends PRouterPath>>
         TypeName methodReturns = ParameterizedTypeName.get(
                 ClassName.get(Map.class) // Map
                 , ClassName.get(String.class) // Map<String,
                 , ParameterizedTypeName.get(ClassName.get(Class.class)
-                        , WildcardTypeName.subtypeOf(ClassName.get(pathType))) // ? extends PRouterPath
+                        , WildcardTypeName.subtypeOf(ClassName.get(pathType))) // Class<? extends PRouterPath>
         );
         // public Map<String,Class<? extends PRouterPath>> getGroupMap
         MethodSpec.Builder methodBuild = MethodSpec.methodBuilder(ProcessorConfig.GROUP_METHOD_NAME)
                 .addAnnotation(Override.class)// override注解
-                .addModifiers(Modifier.PUBLIC)
+                .addModifiers(Modifier.PUBLIC) // public修饰符
                 .returns(methodReturns);// 方法返回值
         // Map<String,Class<? extends PRouterPath>> groupMap = new HashMap<>();
         methodBuild.addStatement("$T<$T,$T> $N = new $T<>()"
@@ -212,6 +211,7 @@ public class PRouterProcessor extends AbstractProcessor {
                 , HashMap.class
         );
         // groupMap.put("order",PRouter$$Path$$order.class)
+        // groupMap.put("wc",PRouter$$Path$$wc.class);
         for (Map.Entry<String, String> entry : mAllGroupMap.entrySet()) {
             methodBuild.addStatement("$N.put($S,$T.class)",
                     ProcessorConfig.GROUP_VAR1
@@ -220,7 +220,7 @@ public class PRouterProcessor extends AbstractProcessor {
         }
         // return groupMap
         methodBuild.addStatement("return $N", ProcessorConfig.GROUP_VAR1);
-        // 最终生成的文件
+        // 最终生成的类文件  PRouter$$Group$$ + order
         String finalClassName = ProcessorConfig.GROUP_FILE_NAME + options;
         showLog("APT生成路由组Group文件：" + aptPackage + "." + finalClassName);
         // 生成类文件
@@ -228,7 +228,7 @@ public class PRouterProcessor extends AbstractProcessor {
                 , TypeSpec.classBuilder(finalClassName) // 类名
                         .addSuperinterface(ClassName.get(groupType))//实现PRouterGroup接口
                         .addModifiers(Modifier.PUBLIC) // public修饰符
-                        .addMethod(methodBuild.build()) // 方法构建(方法参数+方法太)
+                        .addMethod(methodBuild.build()) // 方法构建(方法参数+方法)
                         .build()//类构建完成
         ).build();// JavaFile构建完成
         javaFile.writeTo(filer);
@@ -243,7 +243,6 @@ public class PRouterProcessor extends AbstractProcessor {
         if (ProcessorUtils.isEmpty(mAllPathMap)) {
             return;
         }
-        showLog("pathType:" + pathType);
         // 倒序生成代码
         // 1. 生成方法
         // Map<String,RouterBean>
@@ -253,6 +252,7 @@ public class PRouterProcessor extends AbstractProcessor {
                 , ClassName.get(RouterBean.class)// Map<String,RouterBean>
         );
         for (Map.Entry<String, List<RouterBean>> entry : mAllPathMap.entrySet()) {
+            showLog("for entry.getKey():"+entry.getKey());
             MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(ProcessorConfig.PATH_METHOD_NAME)
                     .addAnnotation(Override.class)
                     .addModifiers(Modifier.PUBLIC)
@@ -284,7 +284,6 @@ public class PRouterProcessor extends AbstractProcessor {
             // 内部有implements，所以方法和类要合为一体生成才行，特殊情况
             // 最终生成的类文件名 PRouter$$Path$$order
             String finalClassName = ProcessorConfig.PATH_FILE_NAME + entry.getKey();
-            showLog("key:" + entry.getKey());
             showLog("APT生成路由Path类文件：" + aptPackage + "." + finalClassName);
             // 生成类文件
             JavaFile.builder(aptPackage//包名 APT存放的路径
@@ -317,8 +316,7 @@ public class PRouterProcessor extends AbstractProcessor {
             showErrorLog("@PRouter注解未按规范配置，eg. /app/MainActivity");
             return false;
         }
-        String finalGroup = path.substring(1, path.indexOf("/",1));
-        showLog("finalGroup:" + finalGroup);
+        String finalGroup = path.substring(1, path.indexOf("/", 1));
         if (!ProcessorUtils.isEmpty(group) && !group.equals(options)) {
             showErrorLog("@PRouter注解中的group值必须和子模块名保持一致");
             return false;
