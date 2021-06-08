@@ -12,13 +12,13 @@ import com.happy.prouter_annotations.Parameter;
 public class AccountCenterActivity extends AppCompatActivity {
 
     @Parameter
-    String name;
+    String name = "小强";
 
     @Parameter
     String sex;
 
     @Parameter
-    int age;
+    int age = 12;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

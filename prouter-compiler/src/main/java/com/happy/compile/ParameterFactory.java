@@ -60,7 +60,7 @@ public class ParameterFactory {
         // 获取注解的值
         String annotationValue = element.getAnnotation(Parameter.class).name();
         annotationValue = ProcessorUtils.isEmpty(annotationValue) ? fieldName : annotationValue;
-        // t.name = getIntent()
+        // t.name = t.getIntent().getStringExtra("name");
         String finalValue = "t." + fieldName;
         String methodContent = finalValue + " = t.getIntent().";
         if (ordinal == TypeKind.INT.ordinal()) {
@@ -73,8 +73,8 @@ public class ParameterFactory {
                 methodContent += "getStringExtra($S)";
             }
         }
-        messager.printMessage(Diagnostic.Kind.NOTE, "拼接："+methodContent);
         if (methodContent.endsWith(")")) {
+            messager.printMessage(Diagnostic.Kind.NOTE, "拼接："+methodContent);
             method.addStatement(methodContent, annotationValue);
         } else {
             messager.printMessage(Diagnostic.Kind.ERROR, "目前只支持String、int和boolean传参哦");
@@ -118,6 +118,9 @@ public class ParameterFactory {
             return new ParameterFactory(this);
         }
     }
-
+    private void showLog(String msg) {
+        // 如果在注解处理器抛出异常，可以使用Diagnostic.Kind.ERROR
+        messager.printMessage(Diagnostic.Kind.NOTE, ">>>>> " + msg);
+    }
 
 }

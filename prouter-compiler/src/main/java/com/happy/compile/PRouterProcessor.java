@@ -252,7 +252,6 @@ public class PRouterProcessor extends AbstractProcessor {
                 , ClassName.get(RouterBean.class)// Map<String,RouterBean>
         );
         for (Map.Entry<String, List<RouterBean>> entry : mAllPathMap.entrySet()) {
-            showLog("for entry.getKey():"+entry.getKey());
             MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(ProcessorConfig.PATH_METHOD_NAME)
                     .addAnnotation(Override.class)
                     .addModifiers(Modifier.PUBLIC)
