@@ -38,4 +38,23 @@ public interface ProcessorConfig {
     // 路由组，GROUP最终要生成的文件名
     String GROUP_FILE_NAME = "PRouter$$Group$$";
 
+    // @Parameter注解的包名 + 类名
+    String PARAMETER_PACKAGE = "com.happy.prouter_annotations.Parameter";
+
+    // PRouter api的ParameterGet高层标准
+    String PROUTER_API_PARAMETER_GET = PROUTER_PACKAGE + ".ParameterGet";
+
+    // PRouter api的ParameterGet方法参数名
+    String PARAMETER_NAME = "targetParameter";
+
+    // PRouter api的ParameterGet方法名
+    String PARAMETER_METHOD_NAME = "getParameter";
+
+    // PRouter api的ParameterGet的生成文件名称 $$Parameter
+    String PARAMETER_FILE_NAME = "$$Parameter";
+
+    // String全类名
+    String STRING = "java.lang.String";
+
+
 }

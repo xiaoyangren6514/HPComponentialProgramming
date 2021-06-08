@@ -8,7 +8,9 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.happy.order.LoginActivity;
+import com.happy.prouter_annotations.PRouter;
 
+@PRouter(path = "/app/MainActivity")
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = " ";
